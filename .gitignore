@@ -2,5 +2,5 @@
 **/.ipynb_checkpoints/
 test.ipynb
 **/data/
-**
-/.vscode
+**/.vscode
+**.venv

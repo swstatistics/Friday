@@ -26,5 +26,6 @@ In this section I will describe my workflow for this project as well as some ins
 
 
 ## Setup
+https://www.color-hex.com/color-palette/1033304
 
 
