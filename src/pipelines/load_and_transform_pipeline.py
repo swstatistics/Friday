@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 from pathlib import Path
 from typing import Final
@@ -16,9 +17,8 @@ def load_data(data_path:str) -> pd.DataFrame:
     """
     try:
         df =  pd.read_excel(data_path)
-        # get rid of empty spaces in headers
-        df.columns = [x.replace(' ', '_') for x in df.columns]
-
+        # get rid of empty spaces in headers // turn double __ to single _
+        df.columns = [ re.sub(r'_+', '_', x)   for x in [re.sub(r'\s+', '_', x) for x in df.columns]]
         return df
     except:
         print('Data could not be loaded.')
@@ -47,11 +47,11 @@ def missing_value_treatement(df: pd.DataFrame)->pd.DataFrame:
     df['comprehensive_product_included'].fillna('KH', inplace=True)
 
     # policies without a risk_predictor_zip_code will be removed, since there is no way to predict this value
-    df['risk_predictor_zip_code'].dropna(inplace=True)
+    df = df.loc[~df.risk_predictor_zip_code.isna()]
 
     # policy_start: in YEB only Change of Insurer is possible and also the most likely one (but not necessarily correct)
     df.loc[(df.policy_start.isna()) & (df.type_of_insurance != "Change of Insurer"), 'policy_start'] = "YOB"
-    df.loc[(df.policy_start.isna()) & (df.type_of_insurance == "Change of Insurer"), 'policy_start'] = "YEB"
+    df = df.loc[~df.policy_start.isna() ] 
     
     return df
 
@@ -59,9 +59,10 @@ def missing_value_treatement(df: pd.DataFrame)->pd.DataFrame:
 def create_new_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     ## 2. Creating new columns
-    df['sf_class_tpl_num'] = df['bonus_malus_class_liability'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '95').replace('S', '96')) )
-    df['sf_class_fc_num'] = df['bonus_malus_class_comprehensive'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '95').replace('S', '96')) )
+    df['sf_class_tpl_num'] = df['bonus_malus_class_liability'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '0.1')) )
+    df['sf_class_fc_num'] = df['bonus_malus_class_comprehensive'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '0.1')) )
     df['number_of_installments'] = df['payment_interval'].apply(lambda x : 12 if x == 'Monthly' else 1)
+    df['payment_fault'] = df['number_of_payment_faults'].apply(lambda x : 1 if x > 0 else 0)
 
     return df
 
@@ -75,6 +76,8 @@ def load_and_transform(data_path:Path, ruleset_path:Path) -> pd.DataFrame:
             load_data(data_path)
             .pipe(validate_data)
             .pipe(missing_value_treatement)
+            .pipe(create_new_columns)
+
             .pipe(one_hot_encoding, ruleset_path)
     )
 
