@@ -1,0 +1,23 @@
+{
+        "tariff_type":          {    "schema": ["Original","Pay per km"]
+                                    ,"loose":"Pay per km"
+                                }
+        ,"type_of_insurance":   {    "schema":["New Vehicle", "Change of Insurer", "First Vehicle"]
+                                    ,"loose":"First Vehicle"
+                                }
+        ,"policy_start":        {   "schema":["YOB", "YEB"]
+                                    ,"loose":"YOB"
+                                }
+        ,"comprehensive_product_included": {   
+                                    "schema":["VK", "TK", "KH"]
+                                    ,"loose":"KH"
+                                }
+        ,"profession_group":    {   "schema":["Standard", "Public service"]
+                                    ,"loose":"Public service"
+                                }
+        ,"insured_parties":     {   "schema":["Insured and Spouse/Partner", "Insured and Others"]
+                                    ,"loose":"Insured and Others"
+                                }
+
+                                
+}
