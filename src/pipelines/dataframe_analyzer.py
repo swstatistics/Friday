@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def get_values(df, field, max_values=20, normalize=True):
+def get_values(df:pd.DataFrame, field:str, max_values:int =20, normalize: bool =True):
     """
     Displays the value_counts of a column in a DataFrame. 
     If there are to many different values in a column (this threshold can be set in max_values), only the number will be printed.
