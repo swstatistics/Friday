@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import re
 
@@ -59,10 +60,12 @@ def missing_value_treatement(df: pd.DataFrame)->pd.DataFrame:
 def create_new_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     ## 2. Creating new columns
-    df['sf_class_tpl_num'] = df['bonus_malus_class_liability'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '0.1')) )
-    df['sf_class_fc_num'] = df['bonus_malus_class_comprehensive'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '0.1')) )
-    df['number_of_installments'] = df['payment_interval'].apply(lambda x : 12 if x == 'Monthly' else 1)
+    df['SF_KH_num'] = df['bonus_malus_class_liability'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '-0.1')) )
+    df['SF_VK_num'] = df['bonus_malus_class_comprehensive'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '-0.1')) )
     df['payment_fault'] = df['number_of_payment_faults'].apply(lambda x : 1 if x > 0 else 0)
+    df['young_driver'] = df['age_insured_person'].apply(lambda x : 1 if int(x) <25 else 0)
+    df['Friday_first'] = np.where((df['car_age_at_purchase'] == df['car_age_contract_start'] ) & (df['type_of_insurance']!='Change of Insurer' ) ,1,0)
+
 
     return df
 
@@ -78,7 +81,7 @@ def load_and_transform(data_path:Path, ruleset_path:Path) -> pd.DataFrame:
             .pipe(missing_value_treatement)
             .pipe(create_new_columns)
 
-            .pipe(one_hot_encoding, ruleset_path)
+            #.pipe(one_hot_encoding, ruleset_path)
     )
 
     return data
