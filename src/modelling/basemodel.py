@@ -24,6 +24,8 @@ base_model = {
     ,'manual_set':{
             'risk_predictor_zip_code':{'groups':[[1,4], [5,6,7],[2,3,8],[9]]
                                        ,'name':'region_group'}
+            ,'deductible':{'groups':[[ '0/500','1000/500', '300/300','500/300','1000/300','300/150'], ['0/0'], ['0/150','0/300'],['1000/150','500/150']]
+                                       ,'name':'deductable_group'}
     }
     ,'dummies': 
             [
@@ -31,8 +33,9 @@ base_model = {
                 ,'payment_interval'
                 ,'tariff_type'
                 ,'policy_start'
-                ,'comprehensive_product_included'
+                #,'comprehensive_product_included'
                 ,'type_of_insurance'
                 ,'insured_parties'
+                ,'Friday_first'
             ]
 }

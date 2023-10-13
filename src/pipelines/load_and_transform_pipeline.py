@@ -64,7 +64,8 @@ def create_new_columns(df: pd.DataFrame) -> pd.DataFrame:
     df['SF_VK_num'] = df['bonus_malus_class_comprehensive'].apply(lambda x : float(str(x).replace('SF', '').replace('1/2', '0.5').replace('M', '-1').replace('S', '-0.1')) )
     df['payment_fault'] = df['number_of_payment_faults'].apply(lambda x : 1 if x > 0 else 0)
     df['young_driver'] = df['age_insured_person'].apply(lambda x : 1 if int(x) <25 else 0)
-    df['Friday_first'] = np.where((df['car_age_at_purchase'] == df['car_age_contract_start'] ) & (df['type_of_insurance']!='Change of Insurer' ) ,1,0)
+    df['Friday_first'] = np.where((df['car_age_at_purchase'] == df['car_age_contract_start'] ) & (df['type_of_insurance']!='Change of Insurer' ) ,'Friday','OtherInsurer')
+    df['deductible'] = (df['deductible_fully_comprehensive'].astype(str) + '/' + df['deductible_partially_comprehensive'].astype(str))
 
 
     return df
@@ -80,8 +81,6 @@ def load_and_transform(data_path:Path, ruleset_path:Path) -> pd.DataFrame:
             .pipe(validate_data)
             .pipe(missing_value_treatement)
             .pipe(create_new_columns)
-
-            #.pipe(one_hot_encoding, ruleset_path)
     )
 
     return data

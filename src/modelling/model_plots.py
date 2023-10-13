@@ -22,9 +22,21 @@ matplotlib.rc('font', **font)
 pylab.rcParams.update(params)
 
 
+def get_best_limits(a:tuple, b:tuple)-> tuple:
 
+    if a[0] <= b[0]:
+        minimum = a[0]
+    else:
+        minimum = b[0] 
 
-def plot_model_field(erg, field_list):
+    if a[1] > b[1]:
+        maximum = a[1]
+    else:
+        maximum = b[1] 
+
+    return (minimum, maximum)
+    
+def plot_model_field(erg, field_list, on_test_data=False):
 
     number_fields = len(field_list)
 
@@ -38,9 +50,9 @@ def plot_model_field(erg, field_list):
 
         curr_ax = ax[i]
 
-        plot_df_grp = get_plot_data(erg, field_name)
-    
-    
+        
+        plot_df_grp = get_plot_data(erg, field_name, on_test_data)
+        
     
         twin1 = curr_ax.twinx()
         twin2 = curr_ax.twinx()
@@ -70,10 +82,14 @@ def plot_model_field(erg, field_list):
         curr_ax.set(ylabel='Exposure')
         curr_ax.yaxis.label.set_color(exp_green)
 
-        twin1.set(ylabel='observed')
+
+        # ylimits 
+        best_ylim = get_best_limits(twin1.get_ylim(), twin2.get_ylim())
+
+        twin1.set(ylabel='observed', ylim = best_ylim)
         twin1.yaxis.label.set_color(line_gray)
 
-        twin2.set(ylabel='predicted', ylim = twin1.get_ylim())
+        twin2.set(ylabel='predicted', ylim = best_ylim)
         twin2.yaxis.label.set_color(line_orange)
 
         twin3.set(ylabel='factors')
