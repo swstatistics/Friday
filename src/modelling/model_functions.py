@@ -57,7 +57,9 @@ def get_model_data_set(df_ohc:pd.DataFrame, ohc_drops, tts_list) -> list:
 
 
 def build_model(df:pd.DataFrame, column_manager:dict, group_file:dict,tts_list:list ) -> dict:
-
+    """
+        Builds the model and generates the output for plotting and model scoring.
+    """
     model_dict = {}
     field_to_group_map = {}
     # create the columns_manager
@@ -205,11 +207,9 @@ def build_model(df:pd.DataFrame, column_manager:dict, group_file:dict,tts_list:l
 
 
 def get_plot_data(erg:dict, field_name:str, on_test_data:bool)-> pd.DataFrame:
-
-
-    
-
-
+    """
+        Connects the original Data with the predictions and adds the coefficients to the output.
+    """
     try:
         group_name = erg['column_manager']['field_to_group_map'][field_name] 
         # load Data for plotting

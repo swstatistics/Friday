@@ -23,7 +23,9 @@ pylab.rcParams.update(params)
 
 
 def get_best_limits(a:tuple, b:tuple)-> tuple:
-
+    """
+        determines the optimal ylim for the shared yaxis
+    """
     if a[0] <= b[0]:
         minimum = a[0]
     else:
@@ -37,12 +39,16 @@ def get_best_limits(a:tuple, b:tuple)-> tuple:
     return (minimum, maximum)
     
 def plot_model_field(erg, field_list, on_test_data=False):
+    """
+        generates a plot for all features in the fieldlist. 
+        Depending on the on_test_data, the testdata or the trainingdata will be plotted.
+        This could be improved with en ENUM, so the complete Dataset could be plotted as well. 
+    """
+
 
     number_fields = len(field_list)
 
-
     fig, ax = plt.subplots(number_fields, 1, figsize=(25,7*number_fields))
-
 
     for i in range(number_fields):
 

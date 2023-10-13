@@ -8,8 +8,6 @@ from typing import Final
 import sys
 sys.path.append(Path(__file__).parent.parent.parent.resolve())
 
-from src.pipelines.one_hot_encoding import one_hot_encoding
-
 
 
 def load_data(data_path:str) -> pd.DataFrame:
