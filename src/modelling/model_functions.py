@@ -132,7 +132,7 @@ def build_model(df:pd.DataFrame, column_manager:dict, group_file:dict,tts_list:l
     column_manager['ohc_keeps'] = ohc_keeps
     column_manager['ohc_drops'] = ohc_drops
     column_manager['field_to_group_map'] = field_to_group_map
-    
+    column_manager['plots'] = list(group_file['ranges'].keys()) + list(group_file['manual_set'].keys()) + group_file['dummies']
     ##############################################################
     ### Create the GLM and modelling                           ###
     ##############################################################
@@ -195,4 +195,35 @@ def build_model(df:pd.DataFrame, column_manager:dict, group_file:dict,tts_list:l
     #return model_data
     return model_dict
 
+
+
+
+
+def get_plot_data(erg, field_name)-> pd.DataFrame:
+
+    try:
+        group_name = erg['column_manager']['field_to_group_map'][field_name] 
+        # load Data for plotting
+        plot_df = erg['prediction_testset'][['contract_nr', field_name, group_name,'payment_fault', 'predicted']].copy()
+        # load factors (sigmiod)
+        coefs = erg['factors'].loc[erg['factors']['field'] == field_name]
+        # merge
+        plot_df = pd.merge(left=plot_df, right=coefs, left_on=group_name, right_on='groups', how='left')
+    except:
+        # load Data for plotting
+        plot_df = erg['prediction_testset'][['contract_nr', field_name, 'payment_fault', 'predicted']].copy()
+        # load factors (sigmiod)
+        coefs = erg['factors'].loc[erg['factors']['field'] == field_name]
+        # merge
+        plot_df = pd.merge(left=plot_df, right=coefs, left_on=field_name, right_on='groups', how='left')
+
+    
+
+    
+    # group by original values
+    plot_df_grp = plot_df.groupby(field_name).agg({'contract_nr':'count','payment_fault':'mean', 'predicted':'mean', 'coef':'min' }).reset_index()
+    
+    # Umbenennen
+    plot_df_grp.columns = [x if x != 'contract_nr' else 'Exposure' for x in [field_name, 'contract_nr', 'payment_fault', 'predicted', 'coef'] ]
+    return plot_df_grp
 
